@@ -1,11 +1,39 @@
 # 🧩 JsonBoard Pro
 
+<img width="2245" height="1587" alt="Green Beige Aesthetic Notebook Double-Sided Poster A3" src="https://github.com/user-attachments/assets/93e83ef0-760f-486a-8fb9-9cf84781a4f7" />
+
 **JsonBoard** is a local-first, zero-setup visual database for your JSON files.
 
-Skip the complexity of Drizzle, Prisma, or SQLite for## 🎯 Perfect For Developers
+
+[![npm version](https://badge.fury.io/js/jsonboard.svg)](https://badge.fury.io/js/jsonboard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Downloads](https://img.shields.io/npm/dm/jsonboard.svg)](https://www.npmjs.com/package/jsonboard)
+[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard&countColor=%23263759&style=plastic)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard)
+
+
+Skip the complexity of Drizzle, Prisma, or SQLite for## 🎯 Perfect For Developers for small projects with manual JSON data.
 
 ### 🚀 Rapid Development Scenarios
-- **🔥 MVP Development** - Get proof-of-concept running in minutes, not ---
+- **🔥 MVP Development** - Get proof-of-concept running in minutes, not 
+- **🧩 Data Modeling** - Quickly design and iterate on data structures
+- **📊 Analytics Dashboards** - Prototype dashboards with JSON data sources
+- **🗂️ Content Management** - Manage blog posts, docs, or product catalogs visually
+- **🔄 API Mocking** - Instantly create and edit mock API responses for frontend development
+- **🧑‍💻 Team Collaboration** - Share JSON data files with teammates using Git
+- **🛠️ Configuration Management** - Edit app settings, feature flags, and environment configs
+- **📦 Package Metadata** - Maintain package.json or config files for npm modules
+- **🧪 Testing Data** - Create and update test fixtures for automated tests
+- **📁 Data Migration** - Prepare and transform data for import/export tasks
+- **🔍 Quick Data Exploration** - Browse and search through JSON files without writing code
+### 🖥️ Dev Portfolio Websites
+- **Personal Projects List** - Easily add, edit, and organize your project showcase
+- **Tech Stack List** - Manage and update your technology skills visually
+- **Blog List** - Create and maintain blog posts or articles without a CMS
+- **More Data Types** - Handle testimonials, achievements, and custom sections
+
+*Planned*: We're working to make this experience as seamless and powerful as Prisma Studio—so you can manage all portfolio data visually, with no backend setup.
+---
+
 
 ## 🌟 Why Open Source?
 
@@ -369,4 +397,4 @@ MIT
 
 ---
 
-Made with ❤️ by SH20RAJ
+Made with ❤️ by [SH20RAJ](https://github.com/SH20RAJ/)
