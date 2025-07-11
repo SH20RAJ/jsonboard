@@ -4,7 +4,13 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { startServer } from './server.js';
 import { detectJsonFiles } from './utils/file-detector.js';
-import * as path from 'path';
+import { resolve } from 'path';
+
+interface CliOptions {
+  dir: string;
+  port: string;
+  open: boolean;
+}
 
 const program = new Command();
 
@@ -17,9 +23,9 @@ program
   .option('-d, --dir <directory>', 'Directory to scan for JSON files', 'data')
   .option('-p, --port <port>', 'Port to run the server on', '3000')
   .option('--no-open', 'Don\'t automatically open the browser')
-  .action(async (options) => {
+  .action(async (options: CliOptions) => {
     try {
-      const targetDir = path.resolve(process.cwd(), options.dir);
+      const targetDir = resolve(process.cwd(), options.dir);
       
       console.log(chalk.blue('🧩 JsonBoard - Visual JSON Database'));
       console.log(chalk.gray(`Scanning directory: ${targetDir}`));
@@ -33,8 +39,8 @@ program
       }
       
       console.log(chalk.green(`✅ Found ${jsonFiles.length} JSON file(s)`));
-      jsonFiles.forEach(file => {
-        console.log(chalk.gray(`   • ${path.relative(targetDir, file)}`));
+      jsonFiles.forEach((file: string) => {
+        console.log(chalk.gray(`   • ${file.replace(targetDir + '/', '')}`));
       });
       
       await startServer({
@@ -43,7 +49,7 @@ program
         openBrowser: options.open
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(chalk.red('❌ Error starting JsonBoard:'));
       console.error(chalk.red(error.message));
       process.exit(1);

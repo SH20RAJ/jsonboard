@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from 'fs';
+import { readdirSync, statSync, readFileSync } from 'fs';
 import { join, extname } from 'path';
 
 export function detectJsonFiles(directory: string): string[] {
@@ -12,7 +12,10 @@ export function detectJsonFiles(directory: string): string[] {
       const stat = statSync(fullPath);
       
       if (stat.isFile() && extname(item) === '.json') {
-        files.push(fullPath);
+        // Validate that it's actually valid JSON
+        if (validateJsonFile(fullPath)) {
+          files.push(fullPath);
+        }
       } else if (stat.isDirectory() && !item.startsWith('.')) {
         // Recursively scan subdirectories
         files.push(...detectJsonFiles(fullPath));
@@ -27,7 +30,7 @@ export function detectJsonFiles(directory: string): string[] {
 
 export function validateJsonFile(filePath: string): boolean {
   try {
-    const content = require('fs').readFileSync(filePath, 'utf-8');
+    const content = readFileSync(filePath, 'utf-8');
     JSON.parse(content);
     return true;
   } catch {

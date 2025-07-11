@@ -2,32 +2,7 @@
   "app": {
     "name": "JsonBoard",
     "version": "1.0.0",
-    "description": "Visual JSON Database",
-    "author": "JsonBoard Team"
+    "description": "Visual JSON Database - TESTED!"
   },
-  "server": {
-    "port": 3000,
-    "host": "localhost",
-    "cors": {
-      "enabled": true,
-      "origins": ["http://localhost:3000"]
-    }
-  },
-  "features": {
-    "autoSave": true,
-    "tableView": true,
-    "rawEditor": true,
-    "fileWatcher": false
-  },
-  "ui": {
-    "theme": "light",
-    "showLineNumbers": true,
-    "fontSize": 14,
-    "tabSize": 2
-  },
-  "security": {
-    "allowFileCreation": false,
-    "allowFileDeletion": false,
-    "readOnly": false
-  }
+  "test": "successful"
 }

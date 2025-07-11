@@ -1,13 +1,17 @@
 [
   {
     "id": 1,
-    "title": "Getting Started with JsonBoard",
+    "title": "Getting Started with JsonBoard I'm Sh",
     "slug": "getting-started-jsonboard",
     "content": "JsonBoard is a powerful tool for managing JSON data...",
     "author": "John Doe",
     "published": true,
     "created_at": "2025-01-01T10:00:00Z",
-    "tags": ["tutorial", "json", "database"],
+    "tags": [
+      "tutorial",
+      "json",
+      "database"
+    ],
     "metadata": {
       "views": 150,
       "likes": 23
@@ -21,7 +25,11 @@
     "author": "Jane Smith",
     "published": true,
     "created_at": "2025-01-02T14:30:00Z",
-    "tags": ["web development", "javascript", "react"],
+    "tags": [
+      "web development",
+      "javascript",
+      "react"
+    ],
     "metadata": {
       "views": 89,
       "likes": 12
@@ -35,7 +43,11 @@
     "author": "Bob Wilson",
     "published": false,
     "created_at": "2025-01-03T09:15:00Z",
-    "tags": ["data", "future", "technology"],
+    "tags": [
+      "data",
+      "future",
+      "technology"
+    ],
     "metadata": {
       "views": 0,
       "likes": 0
