@@ -147,17 +147,4 @@ MIT
 
 ---
 
-Made with ❤️ by \[Your Name or GitHub Link]
-
-```
-
----
-
-Let me know if you want:
-- A scaffolded starter repo (Next.js + CLI entrypoint)
-- A logo/branding
-- A landing page for `jsondb.dev`
-- A help page for VS Code extension integration
-
-You’re onto a **very developer-loved product** — build it right and people will use it in their daily workflows!
-```
+Made with ❤️ by SH20RAJ
