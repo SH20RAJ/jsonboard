@@ -34,5 +34,12 @@
       "age": 35,
       "department": "Sales"
     }
+  },
+  {
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "role": "developer",
+    "active": true,
+    "id": 4
   }
 ]

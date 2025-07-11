@@ -1,0 +1,19 @@
+{
+    "name": "Sample Project",
+    "version": "1.0.0",
+    "description": "This is a sample JSON file.",
+    "author": "Jane Doe",
+    "contributors": [
+        "John Smith",
+        "Alice Johnson"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.18.2",
+        "lodash": "^4.17.21"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "test": "jest"
+    }
+}
