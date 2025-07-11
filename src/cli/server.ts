@@ -11,6 +11,34 @@ interface ServerOptions {
   openBrowser: boolean;
 }
 
+async function findAvailablePort(startPort: number): Promise<number> {
+  return new Promise((resolve, reject) => {
+    function tryPort(port: number) {
+      const testServer = createServer();
+      
+      testServer.listen(port, () => {
+        testServer.close(() => {
+          resolve(port);
+        });
+      });
+      
+      testServer.on('error', (err: any) => {
+        if (err.code === 'EADDRINUSE') {
+          if (port < startPort + 100) { // Try up to 100 ports ahead
+            tryPort(port + 1);
+          } else {
+            reject(new Error(`No available ports found after trying ${port - startPort + 1} ports`));
+          }
+        } else {
+          reject(err);
+        }
+      });
+    }
+    
+    tryPort(startPort);
+  });
+}
+
 export async function startServer(options: ServerOptions): Promise<void> {
   const app = express();
   const server = createServer(app);
@@ -1379,8 +1407,22 @@ export async function startServer(options: ServerOptions): Promise<void> {
     res.send(html);
   });
 
-  server.listen(options.port, () => {
-    const url = `http://localhost:${options.port}`;
+  // Find available port if the requested port is in use
+  let availablePort: number;
+  try {
+    availablePort = await findAvailablePort(options.port);
+    
+    if (availablePort !== options.port) {
+      console.log(chalk.yellow(`⚠️  Port ${options.port} is already in use, using port ${availablePort} instead`));
+    }
+  } catch (error: any) {
+    console.error(chalk.red(`❌ ${error.message}`));
+    console.error(chalk.gray('Try specifying a different port with --port <number>'));
+    process.exit(1);
+  }
+
+  server.listen(availablePort, () => {
+    const url = `http://localhost:${availablePort}`;
     console.log();
     console.log(chalk.green('🚀 JsonBoard is running!'));
     console.log(chalk.blue(`   Local: ${url}`));
@@ -1390,6 +1432,17 @@ export async function startServer(options: ServerOptions): Promise<void> {
     if (options.openBrowser) {
       open(url);
     }
+  });
+
+  // Handle server errors
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(chalk.red(`❌ Port ${availablePort} is already in use`));
+      console.error(chalk.gray('Try specifying a different port with --port <number>'));
+    } else {
+      console.error(chalk.red('❌ Server error:'), err.message);
+    }
+    process.exit(1);
   });
 
   // Graceful shutdown
