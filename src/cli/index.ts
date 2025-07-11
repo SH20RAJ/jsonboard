@@ -5,6 +5,17 @@ import chalk from 'chalk';
 import { startServer } from './server.js';
 import { detectJsonFiles } from './utils/file-detector.js';
 import { resolve } from 'path';
+import { readFileSync } from 'fs';
+
+// Read version from package.json
+const packageJsonPath = resolve(__dirname, '../package.json');
+let version = '1.2.0'; // fallback
+try {
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  version = packageJson.version;
+} catch (error) {
+  // Use fallback version if package.json can't be read
+}
 
 interface CliOptions {
   dir: string;
@@ -17,7 +28,7 @@ const program = new Command();
 program
   .name('jsonboard')
   .description('A local-first visual database for your JSON files')
-  .version('1.0.0');
+  .version(version);
 
 program
   .option('-d, --dir <directory>', 'Directory to scan for JSON files', 'data')

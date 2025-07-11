@@ -1,6 +1,6 @@
 {
     "name": "jsonboard",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "A local-first, zero-setup visual database for your JSON files. Get a spreadsheet-like GUI to edit JSON data without leaving your project.",
     "main": "dist/index.js",
     "bin": {
