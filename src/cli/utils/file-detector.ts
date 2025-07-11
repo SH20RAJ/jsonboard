@@ -4,7 +4,7 @@ import { join, extname } from 'path';
 export function detectJsonFiles(directory: string): string[] {
   const files: string[] = [];
   
-  // Folders and files to ignore (gitignore-style)
+  // Folders and files to ignore (gitignore-style + config files)
   const ignoredItems = [
     'node_modules',
     '.next',
@@ -22,6 +22,27 @@ export function detectJsonFiles(directory: string): string[] {
     '.idea',
     '*.log'
   ];
+
+  // Config files to ignore (only in root directory)
+  const configFiles = [
+    'package.json',
+    'package-lock.json',
+    'tsconfig.json',
+    'jsconfig.json',
+    'tailwind.config.json',
+    'next.config.json',
+    'vite.config.json',
+    'webpack.config.json',
+    'babel.config.json',
+    'eslint.config.json',
+    '.eslintrc.json',
+    'prettier.config.json',
+    '.prettierrc.json',
+    'jest.config.json',
+    'cypress.config.json',
+    'vercel.json',
+    'netlify.json'
+  ];
   
   try {
     const items = readdirSync(directory);
@@ -31,6 +52,11 @@ export function detectJsonFiles(directory: string): string[] {
       if (ignoredItems.some(ignored => 
         ignored.includes('*') ? item.includes(ignored.replace('*', '')) : item === ignored
       )) {
+        continue;
+      }
+
+      // Skip config files (but only in root directory to avoid filtering user data)
+      if (directory === process.cwd() && configFiles.includes(item)) {
         continue;
       }
       

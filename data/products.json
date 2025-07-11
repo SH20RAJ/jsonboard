@@ -1,8 +1,42 @@
 [
   {
     "id": 1,
-    "name": "Gaming Laptop",
+    "name": "Gaming",
     "price": 1299.99,
-    "category": "Electronics"
+    "category": "Electronics",
+    "brand": "TechCorp",
+    "inStock": true,
+    "specs": {
+      "cpu": "Intel i7",
+      "ram": "16GB",
+      "storage": "512GB SSD",
+      "graphics": "RTX 3060"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Wireless Mouse",
+    "price": 29.99,
+    "category": "Electronics",
+    "brand": "TechCorp",
+    "inStock": true,
+    "specs": {
+      "connectivity": "Bluetooth",
+      "battery": "Rechargeable",
+      "dpi": "1600"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Office Chair",
+    "price": 199.99,
+    "category": "Furniture",
+    "brand": "ComfortPlus",
+    "inStock": false,
+    "specs": {
+      "material": "Mesh",
+      "adjustable": true,
+      "warranty": "2 years"
+    }
   }
 ]

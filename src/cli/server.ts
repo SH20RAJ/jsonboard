@@ -9,6 +9,7 @@ interface ServerOptions {
   directory: string;
   port: number;
   openBrowser: boolean;
+  singleFile?: string;
 }
 
 async function findAvailablePort(startPort: number): Promise<number> {
@@ -212,6 +213,38 @@ export async function startServer(options: ServerOptions): Promise<void> {
       res.json({ success: true, record });
     } catch (error) {
       res.status(500).json({ error: 'Failed to add record' });
+    }
+  });
+
+  // Update record by index (for arrays without consistent IDs)
+  app.put('/api/files/:filename/records/index/:index', (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const recordIndex = parseInt(req.params.index);
+      const filePath = join(options.directory, filename);
+      const updatedRecord = req.body;
+      
+      if (!existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+
+      const content = readFileSync(filePath, 'utf-8');
+      const data = JSON.parse(content);
+      
+      if (!Array.isArray(data)) {
+        return res.status(400).json({ error: 'File is not an array' });
+      }
+
+      if (recordIndex < 0 || recordIndex >= data.length) {
+        return res.status(404).json({ error: 'Record index out of bounds' });
+      }
+
+      data[recordIndex] = { ...data[recordIndex], ...updatedRecord };
+      writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+      
+      res.json({ success: true, record: data[recordIndex] });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to update record' });
     }
   });
 
@@ -749,13 +782,30 @@ export async function startServer(options: ServerOptions): Promise<void> {
                 }
             };
 
+            const updateRecordByIndex = async (index, record) => {
+                if (!selectedFile) return;
+                try {
+                    const response = await fetch('/api/files/' + encodeURIComponent(selectedFile.filename) + '/records/index/' + index, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(record)
+                    });
+                    if (response.ok) {
+                        await loadFile(selectedFile.filename);
+                        showNotification('Record updated successfully!', 'success');
+                    }
+                } catch (error) {
+                    showNotification('Failed to update record', 'error');
+                }
+            };
+
             const updateRecord = async (id, record) => {
                 if (!selectedFile) return;
                 try {
                     const response = await fetch('/api/files/' + encodeURIComponent(selectedFile.filename) + '/records/' + id, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ record })
+                        body: JSON.stringify(record) // Send record directly, not wrapped in { record }
                     });
                     if (response.ok) {
                         await loadFile(selectedFile.filename);
@@ -1065,6 +1115,34 @@ export async function startServer(options: ServerOptions): Promise<void> {
             const [editingCell, setEditingCell] = useState(null);
             const [showAddModal, setShowAddModal] = useState(false);
 
+            // Local update function that handles both ID-based and index-based updates
+            const handleCellEdit = async (rowIndex, column, value) => {
+                const record = data[rowIndex];
+                const updatedRecord = { ...record, [column]: value };
+                
+                try {
+                    // If the record has an id, use the ID-based update API
+                    if (record.id !== undefined) {
+                        await onUpdateRecord(record.id, updatedRecord);
+                    } else {
+                        // If no id, use index-based update
+                        if (!selectedFile) return;
+                        const response = await fetch('/api/files/' + encodeURIComponent(selectedFile.filename) + '/records/index/' + rowIndex, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedRecord)
+                        });
+                        if (response.ok) {
+                            await loadFile(selectedFile.filename);
+                            showNotification('Record updated successfully!', 'success');
+                        }
+                    }
+                } catch (error) {
+                    showNotification('Failed to update record', 'error');
+                    console.error('Update error:', error);
+                }
+            };
+
             if (!Array.isArray(data) || data.length === 0) {
                 return (
                     <div className="empty-state">
@@ -1094,12 +1172,6 @@ export async function startServer(options: ServerOptions): Promise<void> {
                     )
                 )
             );
-
-            const handleCellEdit = (rowIndex, column, value) => {
-                const record = data[rowIndex];
-                const updatedRecord = { ...record, [column]: value };
-                onUpdateRecord(record.id, updatedRecord);
-            };
 
             return (
                 <div className="table-container">

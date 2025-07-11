@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "description": "Auto-generated schema for JSON validation",
+  "generatedBy": "JsonBoard Schema Generator",
+  "timestamp": "2025-07-11T07:38:50.893Z",
+  "zodSchema": "See companion .zod.ts file for runtime validation"
+}

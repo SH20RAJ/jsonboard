@@ -1,7 +1,7 @@
 {
     "name": "jsonboard",
-    "version": "1.2.5",
-    "description": "A local-first, zero-setup visual database for your JSON files. Get a spreadsheet-like GUI to edit JSON data without leaving your project.",
+    "version": "1.3.0",
+    "description": "A local-first, zero-setup visual database for your JSON files. Features spreadsheet-like editing, Zod schema validation, single file mode, and smart config filtering. Perfect for developers working with JSON data.",
     "main": "dist/index.js",
     "bin": {
         "jsonboard": "dist/cli.js"
@@ -30,13 +30,19 @@
         "spreadsheet",
         "local-first",
         "cli",
-        "dev-tools"
+        "dev-tools",
+        "zod",
+        "schema",
+        "validation",
+        "typescript",
+        "react",
+        "nextjs"
     ],
     "author": "Your Name <your.email@example.com>",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/sh20raj/jsonboard.git"
+        "url": "git+https://github.com/sh20raj/jsonboard.git"
     },
     "bugs": {
         "url": "https://github.com/sh20raj/jsonboard/issues"
@@ -46,8 +52,8 @@
         "node": ">=18.0.0"
     },
     "dependencies": {
-        "@tanstack/react-table": "^8.10.7",
         "@monaco-editor/react": "^4.6.0",
+        "@tanstack/react-table": "^8.10.7",
         "chalk": "^5.3.0",
         "chokidar": "^3.5.3",
         "commander": "^11.1.0",
@@ -55,7 +61,8 @@
         "next": "^14.0.0",
         "open": "^9.1.0",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "zod": "^4.0.5"
     },
     "devDependencies": {
         "@types/express": "^4.17.21",
