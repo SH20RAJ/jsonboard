@@ -29,8 +29,44 @@ export async function startServer(options: ServerOptions): Promise<void> {
     try {
       const { detectJsonFiles } = require('./utils/file-detector');
       const files: string[] = detectJsonFiles(options.directory);
-      const relativeFiles = files.map((file: string) => file.replace(options.directory + '/', ''));
-      res.json({ files: relativeFiles });
+      
+      const filesWithMetadata = files.map((file: string) => {
+        const relativePath = file.replace(options.directory + '/', '');
+        const stats = require('fs').statSync(file);
+        
+        try {
+          const content = readFileSync(file, 'utf-8');
+          const data = JSON.parse(content);
+          const recordCount = Array.isArray(data) ? data.length : 1;
+          
+          return {
+            filename: relativePath,
+            relativePath,
+            metadata: {
+              size: stats.size,
+              recordCount,
+              lastModified: stats.mtime,
+              created: stats.birthtime,
+              isArray: Array.isArray(data)
+            }
+          };
+        } catch (error) {
+          return {
+            filename: relativePath,
+            relativePath,
+            metadata: {
+              size: stats.size,
+              recordCount: 0,
+              lastModified: stats.mtime,
+              created: stats.birthtime,
+              isArray: false,
+              error: 'Invalid JSON'
+            }
+          };
+        }
+      });
+      
+      res.json({ files: filesWithMetadata });
     } catch (error) {
       console.error('Error scanning files:', error);
       res.status(500).json({ error: 'Failed to scan directory' });
@@ -48,11 +84,20 @@ export async function startServer(options: ServerOptions): Promise<void> {
 
       const content = readFileSync(filePath, 'utf-8');
       const data = JSON.parse(content);
+      const stats = require('fs').statSync(filePath);
+      const relativePath = filename; // Already relative from the API endpoint
       
       res.json({ 
         filename,
+        relativePath,
         data,
-        isArray: Array.isArray(data)
+        isArray: Array.isArray(data),
+        metadata: {
+          size: stats.size,
+          recordCount: Array.isArray(data) ? data.length : 1,
+          lastModified: stats.mtime,
+          created: stats.birthtime
+        }
       });
     } catch (error) {
       res.status(500).json({ error: 'Failed to read file' });
@@ -715,7 +760,8 @@ export async function startServer(options: ServerOptions): Promise<void> {
             };
 
             const filteredFiles = files.filter(file =>
-                file.toLowerCase().includes(searchTerm.toLowerCase())
+                (typeof file === 'string' ? file : file.filename)
+                    .toLowerCase().includes(searchTerm.toLowerCase())
             );
 
             if (loading) {
@@ -828,6 +874,22 @@ export async function startServer(options: ServerOptions): Promise<void> {
 
         // Sidebar Component
         function Sidebar({ files, selectedFile, onFileSelect, onDeleteFile, onCreateFile }) {
+            const formatFileSize = (bytes) => {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            };
+
+            const formatDate = (dateString) => {
+                try {
+                    return new Date(dateString).toLocaleDateString();
+                } catch {
+                    return 'Unknown';
+                }
+            };
+
             return (
                 <div className="sidebar">
                     <div className="sidebar-header">
@@ -843,32 +905,62 @@ export async function startServer(options: ServerOptions): Promise<void> {
                                 No JSON files found
                             </div>
                         ) : (
-                            files.map(file => (
-                                <div 
-                                    key={file}
-                                    className={'file-item' + (selectedFile === file ? ' active' : '')}
-                                    onClick={() => onFileSelect(file)}
-                                >
-                                    <div className="file-info">
-                                        <div className="file-name">
-                                            <i className="fas fa-file-code" style={{ marginRight: '8px' }}></i>
-                                            {file}
+                            files.map(file => {
+                                const fileData = typeof file === 'string' ? { filename: file, metadata: {} } : file;
+                                const isSelected = selectedFile === fileData.filename;
+                                
+                                return (
+                                    <div 
+                                        key={fileData.filename}
+                                        className={'file-item' + (isSelected ? ' active' : '')}
+                                        onClick={() => onFileSelect(fileData.filename)}
+                                    >
+                                        <div className="file-info">
+                                            <div className="file-name">
+                                                <i className={"fas " + (fileData.metadata?.isArray ? "fa-table" : "fa-file-code")} 
+                                                   style={{ marginRight: '8px', color: fileData.metadata?.isArray ? 'var(--success)' : 'var(--primary)' }}></i>
+                                                {fileData.filename}
+                                            </div>
+                                            <div className="file-meta">
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                                                    <span>📁 {fileData.relativePath || fileData.filename}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '2px' }}>
+                                                    {fileData.metadata?.recordCount !== undefined && (
+                                                        <span title="Records">
+                                                            <i className="fas fa-database" style={{ fontSize: '10px', marginRight: '3px' }}></i>
+                                                            {fileData.metadata.recordCount}
+                                                        </span>
+                                                    )}
+                                                    {fileData.metadata?.size && (
+                                                        <span title="File Size">
+                                                            <i className="fas fa-weight-hanging" style={{ fontSize: '10px', marginRight: '3px' }}></i>
+                                                            {formatFileSize(fileData.metadata.size)}
+                                                        </span>
+                                                    )}
+                                                    {fileData.metadata?.lastModified && (
+                                                        <span title="Last Modified">
+                                                            <i className="fas fa-clock" style={{ fontSize: '10px', marginRight: '3px' }}></i>
+                                                            {formatDate(fileData.metadata.lastModified)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="file-meta">JSON Database</div>
+                                        <div className="file-actions">
+                                            <button 
+                                                className="btn btn-danger btn-xs"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onDeleteFile(fileData.filename);
+                                                }}
+                                            >
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="file-actions">
-                                        <button 
-                                            className="btn btn-danger btn-xs"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onDeleteFile(file);
-                                            }}
-                                        >
-                                            <i className="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
+                                );
+                            })
                         )}
                     </div>
                 </div>
@@ -877,12 +969,39 @@ export async function startServer(options: ServerOptions): Promise<void> {
 
         // Content Header Component
         function ContentHeader({ file, viewMode, onViewModeChange, onSave }) {
+            const formatFileSize = (bytes) => {
+                if (!bytes) return '';
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            };
+
             return (
                 <div className="content-header">
                     <div>
-                        <div className="content-title">{file.filename}</div>
+                        <div className="content-title">
+                            <i className={"fas " + (file.isArray ? "fa-table" : "fa-file-code")} 
+                               style={{ marginRight: '8px', color: file.isArray ? 'var(--success)' : 'var(--primary)' }}></i>
+                            {file.filename}
+                        </div>
                         <div className="content-subtitle">
-                            {file.isArray ? \`Array with \${file.data.length} items\` : 'JSON Object'}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+                                <span>📁 {file.relativePath || file.filename}</span>
+                                {file.metadata?.size && (
+                                    <span>📊 {formatFileSize(file.metadata.size)}</span>
+                                )}
+                                <span>
+                                    {file.isArray ? 
+                                        ("🗂️ Array with " + file.data.length + " records") : 
+                                        '📄 JSON Object'
+                                    }
+                                </span>
+                                {file.metadata?.lastModified && (
+                                    <span>🕒 Modified {new Date(file.metadata.lastModified).toLocaleDateString()}</span>
+                                )}
+                            </div>
                         </div>
                     </div>
                     

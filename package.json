@@ -1,6 +1,6 @@
 {
     "name": "jsonboard",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "A local-first, zero-setup visual database for your JSON files. Get a spreadsheet-like GUI to edit JSON data without leaving your project.",
     "main": "dist/index.js",
     "bin": {
@@ -18,7 +18,8 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "prepublishOnly": "npm run build",
-        "clean": "rimraf dist .next"
+        "clean": "rimraf dist .next",
+        "done": "npm run build && npm publish --dry-run"
     },
     "keywords": [
         "json",

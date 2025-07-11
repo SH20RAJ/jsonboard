@@ -8,7 +8,7 @@ Just run `npx jsonboard` and get a full-featured GUI that feels like Google Shee
 [![npm version](https://badge.fury.io/js/jsonboard.svg)](https://badge.fury.io/js/jsonboard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://img.shields.io/npm/dm/jsonboard.svg)](https://www.npmjs.com/package/jsonboard)
-[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard&countColor=%23263759)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard)
+[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard&countColor=%23263759&style=plastic)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2FSH20RAJ%2Fjsonboard)
 
 ---
 
