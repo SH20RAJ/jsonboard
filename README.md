@@ -11,7 +11,24 @@
 
 **Skip the complexity of Drizzle, Prisma, or SQLite for small projects.** No more manual JSON editing in VS Code or downloading-uploading from online tools. Just run `npx jsonboard` and get a full-featured GUI that feels like Google Sheets meets phpMyAdmin.
 
-**[📋 Read Full FAQ & Use Cases](FAQ.md) | [🚀 Quick Start](#-quick-start) | [💡 Real-World Examples](#-real-world-examples)**
+## 🆕 NEW in v1.4.0: Drizzle-Style Schema Management
+
+Generate TypeScript schemas for all your JSON files with a single command! Get the benefits of Drizzle ORM's developer experience without the database complexity.
+
+```bash
+# Generate centralized schema file
+npx jsonboard --init-schema --dir ./data
+
+# Import and use in your TypeScript projects
+import { usersSchema, productsSchema } from './jsonboard.schema';
+
+const result = usersSchema.safeParse(userData);
+if (!result.success) {
+  console.error('Validation errors:', result.error.errors);
+}
+```
+
+**[🧪 Try Schema Generation](#-schema-generation-new) | [📋 Read Full FAQ & Use Cases](FAQ.md) | [🚀 Quick Start](#-quick-start) | [💡 Real-World Examples](#-real-world-examples)**
 
 ---
 
@@ -52,6 +69,7 @@ jsonboard --help
 #   -d, --dir <directory>      Directory to scan for JSON files (default: current directory)
 #   -p, --port <port>          Port to run the server on (default: 3000, auto-detects conflicts)
 #   --no-open                  Don't automatically open the browser
+#   --init-schema              Generate centralized TypeScript schema file
 #   -h, --help                 Display help information
 
 # Examples:
@@ -66,11 +84,125 @@ jsonboard --help
   
 #   # Don't open browser automatically
 #   jsonboard --no-open
+  
+#   # Generate TypeScript schemas (NEW!)
+#   jsonboard --init-schema --dir ./data
+```
+
+---
+
+## 🧪 Schema Generation (NEW)
+
+### 🎯 Drizzle-Style TypeScript Schemas
+
+JsonBoard v1.4.0 introduces centralized schema generation inspired by Drizzle ORM. Generate a single `jsonboard.schema.ts` file containing Zod schemas for all your JSON files.
+
+```bash
+# Generate schemas for all JSON files in a directory
+npx jsonboard --init-schema --dir ./data
+
+# Or use the global installation
+jsonboard --init-schema --dir ./src/data
+```
+
+### 📁 What Gets Generated
+
+The `--init-schema` command creates a comprehensive TypeScript file with:
+
+- **🔧 Zod Schemas** - Runtime validation for each JSON file
+- **📝 TypeScript Types** - Full type safety for your data
+- **🛡️ Validation Functions** - Pre-built helpers with error handling
+- **📊 File Index** - Easy reference map for all schemas
+- **🏷️ Smart Naming** - Automatic conflict resolution for duplicate names
+
+### 💻 Example Generated Schema
+
+```typescript
+// Auto-generated jsonboard.schema.ts
+import { z } from 'zod';
+
+// Schema for: users.json
+export const usersSchema = z.array(z.object({
+  id: z.number().int(),
+  name: z.string(),
+  email: z.string(),
+  role: z.string(),
+  active: z.boolean(),
+  profile: z.object({
+    age: z.number().int(),
+    department: z.string()
+  })
+}));
+
+// Validation function
+export function validateUsersSchema(data: unknown): ValidationResult<UsersSchemaType> {
+  const result = usersSchema.safeParse(data);
+  if (result.success) return { success: true, data: result.data };
+  return { success: false, errors: result.error.errors };
+}
+
+// TypeScript type
+export type UsersSchemaType = z.infer<typeof usersSchema>;
+```
+
+### 🚀 Usage in Your Projects
+
+```typescript
+import { usersSchema, productsSchema, validateUsersSchema } from './jsonboard.schema';
+
+// Runtime validation
+const userData = await fetch('/api/users').then(r => r.json());
+const validation = validateUsersSchema(userData);
+
+if (validation.success) {
+  // TypeScript knows the exact shape of validation.data
+  console.log(`Found ${validation.data.length} users`);
+  validation.data.forEach(user => {
+    console.log(`${user.name} (${user.email})`); // Fully typed!
+  });
+} else {
+  console.error('Validation failed:', validation.errors);
+}
+
+// Direct schema usage
+const result = productsSchema.safeParse(productsData);
+```
+
+### 🎯 Perfect For
+
+- **🔥 Rapid Prototyping** - Get type-safe data validation in seconds
+- **🧪 Testing** - Validate test fixtures and API responses
+- **📊 Data Migration** - Ensure data integrity during migrations
+- **🛡️ Runtime Safety** - Catch data structure mismatches early
+- **👥 Team Collaboration** - Share data contracts via generated types
+- **📚 Documentation** - Auto-documented data structures
+
+### 🔄 Integration with Popular Tools
+
+```bash
+# Next.js projects
+jsonboard --init-schema --dir ./src/data
+
+# Nuxt projects  
+jsonboard --init-schema --dir ./assets/data
+
+# Vite/React projects
+jsonboard --init-schema --dir ./public/data
+
+# Any TypeScript project
+jsonboard --init-schema --dir ./data
 ```
 
 ---
 
 ## ✨ Features
+
+### 🧪 NEW: Schema Generation & Type Safety
+- **🔧 Drizzle-Style Schemas** - Generate centralized TypeScript schemas with Zod
+- **📝 Auto-Generated Types** - Full TypeScript support for all JSON structures
+- **🛡️ Runtime Validation** - Catch data errors before they break your app
+- **📊 Smart Conflict Resolution** - Automatic handling of duplicate schema names
+- **🎯 Single Command Setup** - `--init-schema` generates everything you need
 
 ### 🚀 Smart JSON Detection
 - **🔍 Auto-scan current directory** - No more looking for `/data` folder

@@ -2,6 +2,54 @@
 
 All notable changes to JsonBoard will be documented in this file.
 
+## [1.4.0] - 2025-07-11
+
+### 🚀 Major Features - Drizzle-Style Schema Management
+- **Centralized Schema Generation**: New `--init-schema` command creates a single `jsonboard.schema.ts` file
+- **TypeScript-First Approach**: Generated schemas are fully typed with Zod and TypeScript support
+- **Drizzle-Like Experience**: Import schemas like `import { usersSchema, productsSchema } from './jsonboard.schema'`
+- **Validation Helpers**: Auto-generated validation functions for each schema
+- **Type Exports**: Full TypeScript type support with `UsersSchemaType`, `ProductsSchemaType`, etc.
+- **File Index**: Easy reference system for schema-to-file mapping
+
+### ✨ Schema Management Features
+- **Single File Approach**: All schemas in one `jsonboard.schema.ts` file (no folder pollution)
+- **Smart Schema Naming**: Converts file paths to valid TypeScript identifiers
+- **Validation Functions**: Pre-built validation helpers for each JSON file
+- **Type Safety**: Full TypeScript support with inferred types
+- **Import/Export Ready**: Clean ES6 imports and exports
+
+### 🔧 Developer Experience
+- **Clean Documentation**: Auto-generated JSDoc comments with usage examples
+- **Error Handling**: Comprehensive error messages with path information
+- **Legacy Support**: `--generate-schema` still available for individual files
+- **Zero Configuration**: Works out of the box with any JSON project structure
+
+### 🏗️ Technical Improvements
+- Enhanced schema generator with TypeScript code generation
+- Improved file scanning with better config file exclusion
+- Better error handling and validation reporting
+- Optimized schema generation performance
+
+### 📖 Usage Examples
+
+```bash
+# Generate centralized schema file
+jsonboard --init-schema
+
+# This creates jsonboard.schema.ts with:
+import { usersSchema, productsSchema } from './jsonboard.schema';
+
+// Validate data in your code
+const result = usersSchema.safeParse(userData);
+if (!result.success) {
+  console.error('Validation errors:', result.error.issues);
+}
+
+// Type-safe data
+const users: UsersSchemaType = result.data;
+```
+
 ## [1.3.0] - 2025-07-11
 
 ### 🚀 Major Features
@@ -44,49 +92,41 @@ All notable changes to JsonBoard will be documented in this file.
 
 ## Features Overview
 
-### 🧩 JsonBoard Pro v1.3.0
-JsonBoard is now a comprehensive JSON development tool with:
+### 🧩 JsonBoard Pro v1.4.0
+JsonBoard is now a comprehensive JSON development tool with Drizzle-style schema management:
 
 - 📊 **Spreadsheet-like Interface**: Excel-style editing for JSON arrays
 - 🔍 **Auto-detection**: Recursively scans and finds JSON files
 - 🚀 **Zero Configuration**: Works out of the box with any project
 - 📝 **Raw JSON Editor**: Monaco editor with syntax highlighting
 - 💾 **Real-time Saving**: Auto-saves changes as you type
-- ✅ **Schema Validation**: Zod-powered validation with auto-generated schemas
+- ✅ **Centralized Schema Management**: Drizzle-like schema generation with TypeScript support
 - 📄 **Single File Mode**: Focus on specific files with `-o` flag
 - 🛡️ **Smart Filtering**: Excludes config files automatically
 - 🔗 **Developer Friendly**: CLI with beautiful help and examples
+- 🎯 **TypeScript-First**: Full type safety and IntelliSense support
 
-### CLI Usage Examples
+### Schema Management (New in v1.4.0)
 
-```bash
-# Start JsonBoard in current directory
-jsonboard
+```typescript
+// Generate centralized schema
+jsonboard --init-schema
 
-# Open specific file
-jsonboard -o data.json
+// Import and use schemas
+import { usersSchema, productsSchema, validateUsersSchema } from './jsonboard.schema';
+import type { UsersSchemaType, ProductsSchemaType } from './jsonboard.schema';
 
-# Validate all JSON files
-jsonboard --validate
+// Type-safe validation
+const result = usersSchema.safeParse(userData);
+if (result.success) {
+  const users: UsersSchemaType = result.data; // Fully typed!
+}
 
-# Generate schema files
-jsonboard --generate-schema
-
-# Use custom directory and port
-jsonboard --dir ./my-data --port 8080
-```
-
-### New Validation Features
-
-```bash
-# Validate JSON integrity
-jsonboard --validate
-✅ products.json
-⚠️  users.json
-    • name: Required field missing
-
-# Generate schemas
-jsonboard --generate-schema
-✅ products.json → products.schema.json
-✅ users.json → users.schema.json
+// Validation helpers
+const validation = validateUsersSchema(userData);
+if (validation.success) {
+  console.log('✅ Data is valid');
+} else {
+  console.error('❌ Validation failed:', validation.errors);
+}
 ```

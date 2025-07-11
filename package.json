@@ -1,7 +1,7 @@
 {
     "name": "jsonboard",
-    "version": "1.3.1",
-    "description": "A local-first, zero-setup visual database for your JSON files. Features spreadsheet-like editing, Zod schema validation, single file mode, and smart config filtering. Perfect for developers working with JSON data.",
+    "version": "1.4.0",
+    "description": "A local-first, zero-setup visual database for your JSON files. Features spreadsheet-like editing, centralized Zod schema generation (like Drizzle), TypeScript-first validation, and smart file management. Perfect for developers working with JSON data.",
     "main": "dist/index.js",
     "bin": {
         "jsonboard": "dist/cli.js"
@@ -36,7 +36,11 @@
         "validation",
         "typescript",
         "react",
-        "nextjs"
+        "nextjs",
+        "drizzle-like",
+        "centralized-schema",
+        "type-safe",
+        "orm-style"
     ],
     "author": "Your Name <your.email@example.com>",
     "license": "MIT",

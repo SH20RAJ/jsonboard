@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { startServer } from './server.js';
 import { detectJsonFiles } from './utils/file-detector.js';
 import { JsonSchemaGenerator } from './utils/schema-generator.js';
-import { resolve, basename } from 'path';
+import { resolve, basename, relative } from 'path';
 import { readFileSync, existsSync } from 'fs';
 
 // Read version from package.json
@@ -24,7 +24,8 @@ interface CliOptions {
   open: boolean;
   file?: string; // Single file mode
   validate?: boolean; // Schema validation
-  generateSchema?: boolean; // Generate schema files
+  generateSchema?: boolean; // Generate individual schema files (legacy)
+  initSchema?: boolean; // Generate centralized schema file
 }
 
 const program = new Command();
@@ -56,9 +57,44 @@ program
   .option('-p, --port <port>', 'Port to run the server on (default: 3000, auto-detects conflicts)', '3000')
   .option('--no-open', 'Don\'t automatically open the browser')
   .option('--validate', 'Validate JSON files with auto-generated schemas')
-  .option('--generate-schema', 'Generate .schema.json files for all JSON files')
+  .option('--generate-schema', 'Generate .schema.json files for all JSON files (legacy)')
+  .option('--init-schema', 'Generate centralized jsonboard.schema.ts file with all schemas')
   .action(async (options: CliOptions) => {
     try {
+      // Centralized schema generation mode
+      if (options.initSchema) {
+        const targetDir = resolve(process.cwd(), options.dir);
+        
+        console.log(chalk.blue.bold('🧩 JsonBoard Pro - Schema Initialization'));
+        console.log(chalk.gray(`📁 Scanning directory: ${targetDir}`));
+        console.log(chalk.gray(`📝 Generating centralized schema file...`));
+        console.log();
+
+        const config = JsonSchemaGenerator.generateCentralizedSchema(targetDir);
+        
+        console.log(chalk.green(`✅ Generated jsonboard.schema.ts`));
+        console.log(chalk.gray(`📄 Schema file: ${relative(process.cwd(), config.outputFile)}`));
+        console.log(chalk.gray(`📊 Processed ${config.jsonFiles.length} JSON files:`));
+        
+        config.jsonFiles.forEach(file => {
+          console.log(chalk.gray(`   📄 ${file.relativePath} → ${file.schemaName}`));
+        });
+        
+        console.log();
+        console.log(chalk.yellow.bold('🚀 Usage Examples:'));
+        console.log(chalk.cyan('import { usersSchema, productsSchema } from \'./jsonboard.schema\';'));
+        console.log(chalk.cyan(''));
+        console.log(chalk.cyan('// Validate data'));
+        console.log(chalk.cyan('const result = usersSchema.safeParse(userData);'));
+        console.log(chalk.cyan('if (!result.success) {'));
+        console.log(chalk.cyan('  console.error(\'Validation errors:\', result.error.errors);'));
+        console.log(chalk.cyan('}'));
+        console.log();
+        console.log(chalk.green('✨ Your schemas are ready! Import them in your TypeScript files.'));
+        
+        process.exit(0);
+      }
+
       // Single file mode
       if (options.file) {
         const filePath = resolve(process.cwd(), options.file);
@@ -212,6 +248,9 @@ ${chalk.yellow.bold('Examples:')}
   ${chalk.cyan('jsonboard --file data.json')}
   ${chalk.cyan('jsonboard -o ./config/settings.json')}
   
+  ${chalk.gray('# Initialize centralized schema file (recommended)')}
+  ${chalk.cyan('jsonboard --init-schema')}
+  
   ${chalk.gray('# Specify a custom directory')}
   ${chalk.cyan('jsonboard --dir ./my-data')}
   
@@ -221,11 +260,21 @@ ${chalk.yellow.bold('Examples:')}
   ${chalk.gray('# Validate JSON files with auto-generated schemas')}
   ${chalk.cyan('jsonboard --validate')}
   
-  ${chalk.gray('# Generate .schema.json files for all JSON files')}
+  ${chalk.gray('# Generate individual .schema.json files (legacy)')}
   ${chalk.cyan('jsonboard --generate-schema')}
   
   ${chalk.gray('# Don\'t open browser automatically')}
   ${chalk.cyan('jsonboard --no-open')}
+
+${chalk.yellow.bold('Schema Management:')}
+  ${chalk.gray('# Generate centralized schema file')}
+  ${chalk.cyan('jsonboard --init-schema')}
+  
+  ${chalk.gray('# This creates jsonboard.schema.ts with:')}
+  ${chalk.cyan('import { usersSchema, productsSchema } from \'./jsonboard.schema\';')}
+  
+  ${chalk.gray('# Validate data in your code:')}
+  ${chalk.cyan('const result = usersSchema.safeParse(userData);')}
 
 ${chalk.yellow.bold('Features:')}
   ${chalk.gray('• 📊 Spreadsheet-like interface for JSON editing')}
@@ -234,9 +283,10 @@ ${chalk.yellow.bold('Features:')}
   ${chalk.gray('• 📝 Raw JSON editor with syntax highlighting')}
   ${chalk.gray('• 💾 Real-time saving and validation')}
   ${chalk.gray('• 🎯 Works with any JSON structure')}
-  ${chalk.gray('• ✅ Auto-generated Zod schema validation')}
+  ${chalk.gray('• ✅ Centralized Zod schema generation (like Drizzle)')}
   ${chalk.gray('• 📄 Single file mode for focused editing')}
   ${chalk.gray('• 🛡️ Smart filtering of config files')}
+  ${chalk.gray('• 🔧 TypeScript-first schema management')}
 
 ${chalk.blue.bold('Learn more:')} https://github.com/sh20raj/jsonboard
 `;
