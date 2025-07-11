@@ -1,67 +1,82 @@
 [
   {
     "id": 1,
-    "title": "Getting Started with JsonBoard I'm Sh",
+    "title": "Getting Started with JsonBoard",
     "slug": "getting-started-jsonboard",
-    "content": "JsonBoard is a powerful tool for managing JSON data...",
-    "author": "John Doe",
+    "content": "JsonBoard is a powerful tool for managing JSON data with a spreadsheet-like interface. Perfect for developers who want to edit JSON files visually without leaving their project.",
+    "author": "JsonBoard Team",
     "published": true,
     "created_at": "2025-01-01T10:00:00Z",
     "tags": [
       "tutorial",
       "json",
-      "database"
+      "database",
+      "developer-tools"
     ],
     "metadata": {
       "views": 150,
-      "likes": 23
+      "likes": 23,
+      "featured": true
     }
   },
   {
     "id": 2,
     "title": "Building Modern Web Apps",
     "slug": "building-modern-web-apps",
-    "content": "Modern web development requires efficient data management...",
+    "content": "Modern web development requires efficient data management. Learn how JsonBoard can streamline your development workflow by providing instant visual access to your JSON data.",
     "author": "Jane Smith",
     "published": true,
     "created_at": "2025-01-02T14:30:00Z",
     "tags": [
       "web development",
       "javascript",
-      "react"
+      "react",
+      "productivity"
     ],
     "metadata": {
       "views": 89,
-      "likes": 12
+      "likes": 12,
+      "featured": false
     }
   },
   {
     "id": 3,
     "title": "Future of Data Management",
     "slug": "future-data-management",
-    "content": "As applications become more complex...",
+    "content": "As applications become more complex, the need for intuitive data management tools grows. Explore how visual JSON editing is changing the way developers work with data.",
     "author": "Bob Wilson",
     "published": false,
     "created_at": "2025-01-03T09:15:00Z",
     "tags": [
       "data",
       "future",
-      "technology"
+      "technology",
+      "trends"
     ],
     "metadata": {
       "views": 0,
-      "likes": 0
+      "likes": 0,
+      "featured": false
     }
   },
   {
-    "title": "dwf",
-    "slug": "efwqf",
-    "content": "fqewf",
-    "author": "fwg",
-    "published": "reggre",
-    "created_at": "greg",
-    "tags": "gerw",
-    "metadata": "grfeqw",
-    "id": 4
+    "id": 4,
+    "title": "JsonBoard vs Traditional Editors",
+    "slug": "jsonboard-vs-traditional-editors",
+    "content": "Compare JsonBoard's visual interface with traditional text editors. See why developers are switching to spreadsheet-like JSON editing for better productivity.",
+    "author": "Sarah Johnson",
+    "published": true,
+    "created_at": "2025-01-04T16:45:00Z",
+    "tags": [
+      "comparison",
+      "productivity",
+      "tools",
+      "efficiency"
+    ],
+    "metadata": {
+      "views": 234,
+      "likes": 45,
+      "featured": true
+    }
   }
 ]
