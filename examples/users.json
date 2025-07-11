@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "admin",
+    "active": true,
+    "created_at": "2025-01-01T00:00:00Z",
+    "profile": {
+      "age": 30,
+      "department": "Engineering"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "role": "editor",
+    "active": true,
+    "created_at": "2025-01-02T00:00:00Z",
+    "profile": {
+      "age": 28,
+      "department": "Marketing"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Bob Wilson",
+    "email": "bob.wilson@example.com",
+    "role": "user",
+    "active": false,
+    "created_at": "2025-01-03T00:00:00Z",
+    "profile": {
+      "age": 35,
+      "department": "Sales"
+    }
+  }
+]
